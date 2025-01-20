@@ -1,4 +1,4 @@
-# react2png-lambda
+# react2png
 
 To install dependencies:
 
@@ -6,10 +6,14 @@ To install dependencies:
 bun install
 ```
 
-To run:
+To run dev:
 
 ```bash
-bun run index.ts
+bun dev
 ```
 
-This project was created using `bun init` in bun v1.1.45. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+To make an image of the app:
+
+```bash
+bun makeImage.ts
+```
