@@ -33,7 +33,7 @@ function Home() {
             <p>
                 AAPL stock on {day} fetched from API 👉 ${AAPL.high}
             </p>
-            <p>But look, the response is a PNG.</p>
+            <p>But look, the server response is a PNG.</p>
         </>
     );
 }

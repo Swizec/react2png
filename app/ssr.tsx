@@ -6,9 +6,11 @@ import {
 } from "@tanstack/start/server";
 import { getRouterManifest } from "@tanstack/start/router-manifest";
 import ReactDOMServer from "react-dom/server";
+import nodeHtmlToImage from "node-html-to-image";
+
 import { createRouter } from "./router";
 
-const pngRenderHandler: typeof defaultRenderHandler = ({
+const pngRenderHandler: typeof defaultRenderHandler = async ({
     router,
     responseHeaders,
 }) => {
@@ -17,6 +19,15 @@ const pngRenderHandler: typeof defaultRenderHandler = ({
         `</body>`,
         `${router.injectedHtml.map((d) => d()).join("")}</body>`
     );
+
+    const image = await nodeHtmlToImage({ html, quality: 100 });
+
+    return new Response(image, {
+        status: router.state.statusCode,
+        headers: {
+            "Content-Type": "image/png",
+        },
+    });
 
     return new Response(`<!DOCTYPE html>${html}`, {
         status: router.state.statusCode,
