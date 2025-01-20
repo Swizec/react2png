@@ -1,4 +1,3 @@
-import * as fs from "node:fs";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
 
@@ -7,6 +6,7 @@ async function fetchAAPL() {
         `https://api.polygon.io/v1/open-close/AAPL/2025-01-17?adjusted=true&apiKey=${process.env.POLYGON_API_KEY}`
     );
     const json = await response.json();
+    console.log(json);
     return json;
 }
 
@@ -29,10 +29,11 @@ function Home() {
     return (
         <>
             <h1>Hello world</h1>
-            <p>Plain ole React component.</p>
+            <p>Plain ole React component in a TanStack Start router.</p>
             <p>
-                AAPL stock on {day} fetched from API for 👉 ${AAPL.high}
+                AAPL stock on {day} fetched from API 👉 ${AAPL.high}
             </p>
+            <p>But look, the response is a PNG.</p>
         </>
     );
 }

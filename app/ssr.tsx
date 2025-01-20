@@ -1,12 +1,30 @@
 /// <reference types="vinxi/types/server" />
 import {
     createStartHandler,
-    defaultStreamHandler,
+    defaultRenderHandler,
+    StartServer,
 } from "@tanstack/start/server";
 import { getRouterManifest } from "@tanstack/start/router-manifest";
+import ReactDOMServer from "react-dom/server";
 import { createRouter } from "./router";
+
+const pngRenderHandler: typeof defaultRenderHandler = ({
+    router,
+    responseHeaders,
+}) => {
+    let html = ReactDOMServer.renderToString(<StartServer router={router} />);
+    html = html.replace(
+        `</body>`,
+        `${router.injectedHtml.map((d) => d()).join("")}</body>`
+    );
+
+    return new Response(`<!DOCTYPE html>${html}`, {
+        status: router.state.statusCode,
+        headers: responseHeaders,
+    });
+};
 
 export default createStartHandler({
     createRouter,
     getRouterManifest,
-})(defaultStreamHandler);
+})(pngRenderHandler);
