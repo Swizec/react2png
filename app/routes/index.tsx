@@ -34,8 +34,8 @@ async function fetchAAPL() {
 const getAAPL = createServerFn({
     method: "GET",
 }).handler(() => {
-    return process.env.POLYGON_API_KEY;
-    // return fetchAAPL();
+    // return process.env.POLYGON_API_KEY;
+    return fetchAAPL();
 });
 
 export const Route = createFileRoute("/")({
@@ -49,12 +49,14 @@ function Home() {
     const AAPL = Route.useLoaderData();
     const day = "2025-01-17";
 
+    console.log(AAPL);
+
     return (
         <>
             <h1>Hello world</h1>
             <p>Plain ole React component.</p>
             <p>
-                AAPL stock on {day} fetched from API for 👉 ${AAPL}
+                AAPL stock on {day} fetched from API for 👉 ${AAPL.high}
             </p>
         </>
     );
