@@ -1,0 +1,26 @@
+{
+    "name": "react2png-lambda",
+    "module": "index.ts",
+    "type": "module",
+    "scripts": {
+        "dev": "vinxi dev",
+        "build": "vinxi build",
+        "start": "vinxi start"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "@types/react": "^19.0.7",
+        "@types/react-dom": "^19.0.3",
+        "@vitejs/plugin-react": "^4.3.4"
+    },
+    "peerDependencies": {
+        "typescript": "^5.7.3"
+    },
+    "dependencies": {
+        "@tanstack/react-router": "^1.97.3",
+        "@tanstack/start": "^1.97.3",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "vinxi": "^0.5.1"
+    }
+}
