@@ -23,19 +23,38 @@ import { createServerFn } from "@tanstack/start";
 //         await fs.promises.writeFile(filePath, `${count + data}`);
 //     });
 
+async function fetchAAPL() {
+    const response = await fetch(
+        `https://api.polygon.io/v1/open-close/AAPL/2025-01-17?adjusted=true&apiKey=${process.env.POLYGON_API_KEY}`
+    );
+    const json = await response.json();
+    return json;
+}
+
+const getAAPL = createServerFn({
+    method: "GET",
+}).handler(() => {
+    return fetchAAPL();
+});
+
 export const Route = createFileRoute("/")({
     component: Home,
+    loader: async () => await getAAPL(),
     // loader: async () => await getCount(),
 });
 
 function Home() {
     const router = useRouter();
-    const state = Route.useLoaderData();
+    const AAPL = Route.useLoaderData();
+    const day = "2025-01-17";
 
     return (
         <>
             <h1>Hello world</h1>
-            <p>Plain ole React component</p>
+            <p>Plain ole React component.</p>
+            <p>
+                AAPL stock on {day} fetched from API for 👉 ${AAPL.high}
+            </p>
         </>
     );
 }
