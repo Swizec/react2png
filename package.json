@@ -18,6 +18,7 @@
     "dependencies": {
         "@tanstack/react-router": "^1.97.3",
         "@tanstack/start": "^1.97.3",
+        "html-to-image": "^1.11.11",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "vinxi": "^0.5.1",
