@@ -1,6 +1,5 @@
 {
     "name": "react2png-lambda",
-    "module": "index.ts",
     "type": "module",
     "scripts": {
         "dev": "vinxi dev",
