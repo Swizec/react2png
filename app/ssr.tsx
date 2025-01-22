@@ -28,14 +28,14 @@ const pngRenderHandler: typeof defaultRenderHandler = async ({
             "Content-Type": "image/png",
         },
     });
-
-    return new Response(`<!DOCTYPE html>${html}`, {
-        status: router.state.statusCode,
-        headers: responseHeaders,
-    });
 };
 
 export default createStartHandler({
     createRouter,
     getRouterManifest,
 })(pngRenderHandler);
+
+// export default createStartHandler({
+//     createRouter,
+//     getRouterManifest,
+// })(defaultRenderHandler);

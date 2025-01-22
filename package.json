@@ -16,6 +16,9 @@
         "typescript": "^5.7.3"
     },
     "dependencies": {
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.0",
+        "@mui/joy": "^5.0.0-beta.51",
         "@tanstack/react-router": "^1.97.3",
         "@tanstack/start": "^1.97.3",
         "html-to-image": "^1.11.11",

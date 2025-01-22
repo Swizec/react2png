@@ -1,10 +1,11 @@
+import { CssVarsProvider, ScopedCssBaseline } from "@mui/joy";
 import {
     Outlet,
     ScrollRestoration,
     createRootRoute,
 } from "@tanstack/react-router";
 import { Meta, Scripts } from "@tanstack/start";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 export const Route = createRootRoute({
     head: () => ({
@@ -25,9 +26,14 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+    const [root, setRoot] = useState<HTMLDivElement | null>(null);
     return (
         <RootDocument>
-            <Outlet />
+            <CssVarsProvider>
+                <ScopedCssBaseline ref={(element) => setRoot(element)}>
+                    <Outlet />
+                </ScopedCssBaseline>
+            </CssVarsProvider>
         </RootDocument>
     );
 }
@@ -37,6 +43,10 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <html>
             <head>
                 <Meta />
+                <meta
+                    name="viewport"
+                    content="initial-scale=1, width=device-width"
+                />
             </head>
             <body>
                 {children}
