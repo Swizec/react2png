@@ -30,12 +30,22 @@ const pngRenderHandler: typeof defaultRenderHandler = async ({
     });
 };
 
+const switchingHandler: typeof defaultRenderHandler = async ({
+    request,
+    router,
+    responseHeaders,
+}) => {
+    const url = new URL(request.url);
+    const format = url.searchParams.get("f");
+
+    if (format === "png") {
+        return pngRenderHandler({ request, router, responseHeaders });
+    } else {
+        return defaultRenderHandler({ request, router, responseHeaders });
+    }
+};
+
 export default createStartHandler({
     createRouter,
     getRouterManifest,
-})(pngRenderHandler);
-
-// export default createStartHandler({
-//     createRouter,
-//     getRouterManifest,
-// })(defaultRenderHandler);
+})(switchingHandler);
