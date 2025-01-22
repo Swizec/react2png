@@ -8,30 +8,68 @@ import {
     SvgIcon,
     Typography,
 } from "@mui/joy";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import {
+    createFileRoute,
+    useRouteContext,
+    useRouter,
+} from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
 
-async function fetchAAPL() {
+async function fetchStock(stonk: string) {
     const response = await fetch(
-        `https://api.polygon.io/v1/open-close/AAPL/2025-01-15?adjusted=true&apiKey=${process.env.POLYGON_API_KEY}`
+        `https://api.polygon.io/v1/open-close/${stonk}/2025-01-15?adjusted=true&apiKey=${process.env.POLYGON_API_KEY}`
     );
     const json = await response.json();
     console.log(json);
     return json;
 }
 
-const getAAPL = createServerFn({
+const getStonk = createServerFn({
     method: "GET",
-}).handler(() => {
-    return fetchAAPL();
-});
+})
+    .validator((data: { stonk: string }) => {
+        return {
+            stonk: data?.stonk,
+        };
+    })
+    .handler(async ({ data }) => {
+        return fetchStock(data?.stonk);
+    });
 
 export const Route = createFileRoute("/")({
     component: Home,
-    loader: async () => await getAAPL(),
+    loader: async ({ context }) => {
+        await context.queryClient.ensureQueryData({
+            queryKey: ["stonks", "AAPL"],
+            queryFn: () => getStonk({ data: { stonk: "AAPL" } }),
+        });
+        await context.queryClient.ensureQueryData({
+            queryKey: ["stonks", "MSFT"],
+            queryFn: () => getStonk({ data: { stonk: "MSFT" } }),
+        });
+    },
 });
 
-const StockCard = ({ data }: { data: any }) => {
+const StockCard = ({ stonk }: { stonk: string }) => {
+    const { data, isLoading, isError, isRefetching } = useQuery({
+        queryKey: ["stonks", stonk],
+        queryFn: () => {
+            return getStonk({ data: { stonk } });
+        },
+    });
+
+    const value =
+        isLoading || isRefetching ? (
+            <CircularProgress size="sm" />
+        ) : isError ? (
+            <Typography level="h2">Error</Typography>
+        ) : data.high ? (
+            <Typography level="h2">${data.high}</Typography>
+        ) : (
+            <Typography level="h2">No data</Typography>
+        );
+
     return (
         <Card variant="solid" color="primary" invertedColors>
             <CardContent orientation="horizontal">
@@ -53,12 +91,8 @@ const StockCard = ({ data }: { data: any }) => {
                     </SvgIcon>
                 </CircularProgress>
                 <CardContent>
-                    <Typography level="body-md">AAPL</Typography>
-                    {data.high ? (
-                        <Typography level="h2">${data.high}</Typography>
-                    ) : (
-                        <Typography level="h2">Loading...</Typography>
-                    )}
+                    <Typography level="body-md">{stonk}</Typography>
+                    {value}
                 </CardContent>
             </CardContent>
             <CardActions>
@@ -74,9 +108,14 @@ const StockCard = ({ data }: { data: any }) => {
 };
 
 function Home() {
-    const router = useRouter();
-    const AAPL = Route.useLoaderData();
-    const day = "2025-01-15";
+    const context = Route.useRouteContext();
+
+    function reloadData() {
+        context.queryClient.invalidateQueries({
+            queryKey: ["stonks"],
+            refetchType: "all",
+        });
+    }
 
     return (
         <Stack spacing={2} sx={{ maxWidth: 450 }}>
@@ -86,10 +125,17 @@ function Home() {
                 app. Full support for css-in-js with a composable design system
                 (JoyUI). Loading data from an API.
             </Typography>
-            <StockCard data={AAPL} />
+
+            <StockCard stonk="AAPL" />
+            <StockCard stonk="MSFT" />
+
             <Typography level="body-md">
-                But look, the server response is a PNG.
+                But look, the server response depends on URL. It can be a plain
+                PNG, a fully interactive webapp, or a PDF.
             </Typography>
+            <Button variant="soft" onClick={reloadData}>
+                Reload Data
+            </Button>
         </Stack>
     );
 }
