@@ -40,13 +40,16 @@ const getStonk = createServerFn({
 export const Route = createFileRoute("/")({
     component: Home,
     loader: async ({ context }) => {
+        const AAPL = await getStonk({ data: { stonk: "AAPL" } });
+        const MSFT = await getStonk({ data: { stonk: "MSFT" } });
+
         await context.queryClient.ensureQueryData({
             queryKey: ["stonks", "AAPL"],
-            queryFn: () => getStonk({ data: { stonk: "AAPL" } }),
+            queryFn: () => AAPL,
         });
         await context.queryClient.ensureQueryData({
             queryKey: ["stonks", "MSFT"],
-            queryFn: () => getStonk({ data: { stonk: "MSFT" } }),
+            queryFn: () => MSFT,
         });
     },
 });
@@ -59,16 +62,15 @@ const StockCard = ({ stonk }: { stonk: string }) => {
         },
     });
 
-    const value =
-        isLoading || isRefetching ? (
-            <CircularProgress size="sm" />
-        ) : isError ? (
-            <Typography level="h2">Error</Typography>
-        ) : data.high ? (
-            <Typography level="h2">${data.high}</Typography>
-        ) : (
-            <Typography level="h2">No data</Typography>
-        );
+    const value = isLoading ? (
+        <CircularProgress size="sm" />
+    ) : isError ? (
+        <Typography level="h2">Error</Typography>
+    ) : data.high ? (
+        <Typography level="h2">${data.high}</Typography>
+    ) : (
+        <Typography level="h2">No data</Typography>
+    );
 
     return (
         <Card variant="solid" color="primary" invertedColors>

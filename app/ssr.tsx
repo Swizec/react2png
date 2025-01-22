@@ -30,12 +30,12 @@ const pngRenderHandler: typeof defaultRenderHandler = async ({
     });
 };
 
-// export default createStartHandler({
-//     createRouter,
-//     getRouterManifest,
-// })(pngRenderHandler);
-
 export default createStartHandler({
     createRouter,
     getRouterManifest,
-})(defaultRenderHandler);
+})(pngRenderHandler);
+
+// export default createStartHandler({
+//     createRouter,
+//     getRouterManifest,
+// })(defaultRenderHandler);
