@@ -25,6 +25,7 @@
         "@tanstack/start": "^1.97.3",
         "html-to-image": "^1.11.11",
         "node-html-to-image": "^5.0.0",
+        "puppeteer": "^24.1.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "vinxi": "^0.5.1",

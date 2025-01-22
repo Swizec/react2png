@@ -21,7 +21,7 @@ async function fetchStock(stonk: string) {
         `https://api.polygon.io/v1/open-close/${stonk}/2025-01-15?adjusted=true&apiKey=${process.env.POLYGON_API_KEY}`
     );
     const json = await response.json();
-    console.log(json);
+
     return json;
 }
 

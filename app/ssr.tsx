@@ -7,7 +7,7 @@ import {
 import { getRouterManifest } from "@tanstack/start/router-manifest";
 import ReactDOMServer from "react-dom/server";
 import nodeHtmlToImage from "node-html-to-image";
-
+import puppeteer from "puppeteer";
 import { createRouter } from "./router";
 
 const pngRenderHandler: typeof defaultRenderHandler = async ({
@@ -30,6 +30,30 @@ const pngRenderHandler: typeof defaultRenderHandler = async ({
     });
 };
 
+const pdfRenderHandler: typeof defaultRenderHandler = async ({
+    router,
+    responseHeaders,
+}) => {
+    let html = ReactDOMServer.renderToString(<StartServer router={router} />);
+    html = html.replace(
+        `</body>`,
+        `${router.injectedHtml.map((d) => d()).join("")}</body>`
+    );
+
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(html);
+    const pdf = await page.pdf({ format: "A4" });
+    await browser.close();
+
+    return new Response(pdf, {
+        status: router.state.statusCode,
+        headers: {
+            "Content-Type": "application/pdf",
+        },
+    });
+};
+
 const switchingHandler: typeof defaultRenderHandler = async ({
     request,
     router,
@@ -40,6 +64,8 @@ const switchingHandler: typeof defaultRenderHandler = async ({
 
     if (format === "png") {
         return pngRenderHandler({ request, router, responseHeaders });
+    } else if (format === "pdf") {
+        return pdfRenderHandler({ request, router, responseHeaders });
     } else {
         return defaultRenderHandler({ request, router, responseHeaders });
     }
